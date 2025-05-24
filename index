@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html lang="ms">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>simpansat</title>
+
+    <style>
+
+        body {
+
+            font-family: sans-serif;
+
+            max-width: 600px;
+
+            margin: 30px auto;
+
+        }
+
+        label {
+
+            display: block;
+
+            margin-bottom: 5px;
+
+        }
+
+        input, button {
+
+            padding: 8px;
+
+            margin: 5px;
+
+        }
+
+        ul {
+
+            list-style-type: none;
+
+            padding: 0;
+
+        }
+
+        li {
+
+            margin-bottom: 10px;
+
+        }
+
+        .edit {
+
+            margin-left: 10px;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h2>Senarai Perkataan/Aksara</h2>
+
+    <label for="inputText">Masukkan teks:</label>
+
+    <input type="text" id="inputText" placeholder="Masukkan teks">
+
+    <button onclick="addItem()">Tambah</button>
+
+    <ul id="itemList"></ul>
+
+
+    <script>
+
+        let items = JSON.parse(localStorage.getItem("dataList")) || [];
+
+        const inputElement = document.getElementById("inputText");
+
+        const listElement = document.getElementById("itemList");
+
+
+        function saveToLocal() {
+
+            localStorage.setItem("dataList", JSON.stringify(items));
+
+        }
+
+
+        function renderList() {
+
+            listElement.innerHTML = "";
+
+            items.forEach((text, index) => {
+
+                const li = document.createElement("li");
+
+                li.innerHTML = `
+
+                    <span>${text}</span>
+
+                    <button class="edit" onclick="editItem(${index})">Edit</button>
+
+                    <button onclick="deleteItem(${index})">Padam</button>
+
+                `;
+
+                listElement.appendChild(li);
+
+            });
+
+        }
+
+
+        function addItem() {
+
+            const value = inputElement.value.trim();
+
+            if (value) {
+
+                items.push(value);
+
+                inputElement.value = "";
+
+                saveToLocal();
+
+                renderList();
+
+                inputElement.focus(); // Fokus kembali ke input setelah menambah
+
+            }
+
+        }
+
+
+        function editItem(index) {
+
+            const newText = prompt("Kemaskini teks:", items[index]);
+
+            if (newText !== null) {
+
+                items[index] = newText.trim();
+
+                saveToLocal();
+
+                renderList();
+
+            }
+
+        }
+
+
+        function deleteItem(index) {
+
+            if (confirm("Anda pasti mahu padam?")) {
+
+                items.splice(index, 1);
+
+                saveToLocal();
+
+                renderList();
+
+            }
+
+        }
+
+
+        renderList();
+
+
+        // Tambahkan event listener untuk menekan Enter pada input
+
+        inputElement.addEventListener('keypress', function(event) {
+
+            if (event.key === 'Enter') {
+
+                addItem();
+
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>
